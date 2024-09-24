@@ -80,12 +80,8 @@ bool Connection::connect_to_AWS() {
 // This function is used to send a message to an endpoint using a JSON format
 bool Connection::publishMessage( char *payload ) 
 {
-  StaticJsonDocument<200> doc;
-  doc["msg"] = payload;
-  char jsonBuffer[512];
-  serializeJson(doc, jsonBuffer);
 
-  if ( client.publish( AWS_IOT_PUBLISH_TOPIC, jsonBuffer) ) {
+  if ( client.publish( AWS_IOT_PUBLISH_TOPIC, payload ) ) {
     Serial.println("Message published successfully!");
     return true;
   } else {
