@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Connection.h>
 
+
 // Constructor 
 Connection::Connection() {
   // Set up Network and MQTT parameters 
@@ -8,7 +9,7 @@ Connection::Connection() {
   client = PubSubClient(net);
    
   // Modify these values to change the Endpoint for AWS IOT MQTT
-  AWS_IOT_PUBLISH_TOPIC = "esp32/light_sensor_value";
+  //AWS_IOT_PUBLISH_TOPIC = "esp32/light_sensor_value";
   AWS_IOT_SUB_TOPIC     = "esp32/light_sensor_sub";
 };
 
@@ -46,6 +47,45 @@ bool Connection::connect_to_AWS() {
   client.setServer( AWS_IOT_ENDPOINT, 8883 );
   client.setCallback(Connection::messageHandler);
 
+    // Set up OTA 
+  Serial.println("Setting up OTA");
+  ArduinoOTA.setHostname("jon-ESP32");
+
+  // ArduinoOTA
+  //   .onStart([]() {
+  //     String type;
+  //     if (ArduinoOTA.getCommand() == U_FLASH) {
+  //       type = "sketch";
+  //     } else {  // U_SPIFFS
+  //       type = "filesystem";
+  //     }
+
+  //     // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+  //     Serial.println("Start updating " + type);
+  //   })
+  //   .onEnd([]() {
+  //     Serial.println("\nEnd");
+  //   })
+  //   .onProgress([](unsigned int progress, unsigned int total) {
+  //     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  //   })
+  //   .onError([](ota_error_t error) {
+  //     Serial.printf("Error[%u]: ", error);
+  //     if (error == OTA_AUTH_ERROR) {
+  //       Serial.println("Auth Failed");
+  //     } else if (error == OTA_BEGIN_ERROR) {
+  //       Serial.println("Begin Failed");
+  //     } else if (error == OTA_CONNECT_ERROR) {
+  //       Serial.println("Connect Failed");
+  //     } else if (error == OTA_RECEIVE_ERROR) {
+  //       Serial.println("Receive Failed");
+  //     } else if (error == OTA_END_ERROR) {
+  //       Serial.println("End Failed");
+  //     }
+  // });
+
+  ArduinoOTA.begin();
+
   Serial.println("Connecting to AWS IOT");
 
   // Loop until we're reconnected
@@ -74,14 +114,16 @@ bool Connection::connect_to_AWS() {
 
   Serial.println("AWS IOT Connected!");
 
+  
+
   return true;
 };
 
 // This function is used to send a message to an endpoint using a JSON format
-bool Connection::publishMessage( char *payload ) 
+bool Connection::publishMessage( const char *payload, const char *topic ) 
 {
 
-  if ( client.publish( AWS_IOT_PUBLISH_TOPIC, payload ) ) {
+  if ( client.publish( topic, payload ) ) {
     Serial.println("Message published successfully!");
     return true;
   } else {
@@ -89,6 +131,15 @@ bool Connection::publishMessage( char *payload )
     return false;
   }
 
+}
+
+void Connection::subscribeTopic(const char *topic) {
+  Serial.println(topic);
+  client.subscribe(topic); 
+}
+
+void Connection::setOnMessageCallback(std::function<void (char *, uint8_t *, unsigned int)> callback_function ) { 
+  client.setCallback( callback_function );
 }
 
 

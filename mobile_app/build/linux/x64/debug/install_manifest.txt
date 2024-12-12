@@ -1,0 +1,15 @@
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/home_automation_app
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.json
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/assets/images/random.jpg
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/assets/Certificates/iphone_device.crt
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/assets/Certificates/iphone_private.key
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/assets/Certificates/IphoneRootCA1.pem
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/jon/Documents/projects/HomeAutomation/mobileApp/home_automation_app/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
