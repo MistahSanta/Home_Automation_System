@@ -5,16 +5,15 @@
 // Constructor 
 Connection::Connection() {
   // Set up Network and MQTT parameters 
-  net    = WiFiClientSecure();
+  net    = WiFiClient();
   client = PubSubClient(net);
-   
   // Modify these values to change the Endpoint for AWS IOT MQTT
   //AWS_IOT_PUBLISH_TOPIC = "esp32/light_sensor_value";
   AWS_IOT_SUB_TOPIC     = "esp32/light_sensor_sub";
 };
 
-bool Connection::connect_to_AWS() { 
-  WiFi.mode( WIFI_STA );
+bool Connection::reconnect_to_wifi() { 
+
   WiFi.begin( WIFI_SSID, WIFI_PASSWORD );
 
   Serial.println("Connecting to Wi-Fi");
@@ -35,59 +34,10 @@ bool Connection::connect_to_AWS() {
   } else {
     Serial.println("No Internet access!");
   }
-
-
-
-  // Configure WiFiClientSecure to use the AWS IoT device_credientials 
-  net.setCACert(AWS_CERT_CA);
-  net.setCertificate(AWS_CERT_CRT);
-  net.setPrivateKey(AWS_CERT_PRIVATE);
-
-  //Connect to the MQTT broker on the AWS endpoint
-  client.setServer( AWS_IOT_ENDPOINT, 8883 );
-  client.setCallback(Connection::messageHandler);
-
-    // Set up OTA 
-  Serial.println("Setting up OTA");
-  ArduinoOTA.setHostname("jon-ESP32");
-
-  // ArduinoOTA
-  //   .onStart([]() {
-  //     String type;
-  //     if (ArduinoOTA.getCommand() == U_FLASH) {
-  //       type = "sketch";
-  //     } else {  // U_SPIFFS
-  //       type = "filesystem";
-  //     }
-
-  //     // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-  //     Serial.println("Start updating " + type);
-  //   })
-  //   .onEnd([]() {
-  //     Serial.println("\nEnd");
-  //   })
-  //   .onProgress([](unsigned int progress, unsigned int total) {
-  //     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  //   })
-  //   .onError([](ota_error_t error) {
-  //     Serial.printf("Error[%u]: ", error);
-  //     if (error == OTA_AUTH_ERROR) {
-  //       Serial.println("Auth Failed");
-  //     } else if (error == OTA_BEGIN_ERROR) {
-  //       Serial.println("Begin Failed");
-  //     } else if (error == OTA_CONNECT_ERROR) {
-  //       Serial.println("Connect Failed");
-  //     } else if (error == OTA_RECEIVE_ERROR) {
-  //       Serial.println("Receive Failed");
-  //     } else if (error == OTA_END_ERROR) {
-  //       Serial.println("End Failed");
-  //     }
-  // });
-
-  ArduinoOTA.begin();
-
-  Serial.println("Connecting to AWS IOT");
-
+  return true;
+}
+bool Connection::reconnect_to_mqtt() { 
+  int num_retries = 0; 
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -95,8 +45,13 @@ bool Connection::connect_to_AWS() {
     if (client.connect("arduinoClient")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-
+      return true; 
     } else {
+      num_retries++;
+      if ( num_retries >= 5 ) {
+        return false; 
+      }
+
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
@@ -104,6 +59,35 @@ bool Connection::connect_to_AWS() {
       delay(5000);
     }
   }
+
+}
+bool Connection::connect_to_AWS() { 
+  WiFi.mode( WIFI_STA );
+  this->reconnect_to_wifi();
+
+
+  // Configure WiFiClientSecure to use the AWS IoT 
+  // Arduino library doesn't allow me to set TLS version, so ill just ignore and it use esp idf and actually implement that there wher
+  // i will have more control 
+  //net.setCACert(AWS_CERT_CA);
+  //net.setCertificate(AWS_DEVICE_CRT);
+  //net.setPrivateKey(AWS_CERT_PRIVATE);
+  // net.setInsecure();
+
+  
+  //Connect to the MQTT broker on the AWS endpoint
+  client.setServer( AWS_IOT_ENDPOINT, 1883 );
+  client.setCallback(Connection::messageHandler);
+  
+    // Set up OTA 
+  Serial.println("Setting up OTA");
+  ArduinoOTA.setHostname("jon-ESP32");
+
+  ArduinoOTA.begin();
+
+  Serial.println("Connecting to AWS IOT");
+
+  this->reconnect_to_mqtt();
 
   //Subscribe to the topic
   Serial.print("AWS_SUB: ");
@@ -113,8 +97,6 @@ bool Connection::connect_to_AWS() {
   }
 
   Serial.println("AWS IOT Connected!");
-
-  
 
   return true;
 };

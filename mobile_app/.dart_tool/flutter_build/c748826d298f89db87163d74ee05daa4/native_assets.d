@@ -1,0 +1,1 @@
+ /home/jon/Arduino/My_Projects/HomeAutomation/mobile_app/.dart_tool/flutter_build/c748826d298f89db87163d74ee05daa4/native_assets.yaml: 

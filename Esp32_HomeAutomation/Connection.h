@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h> // This libraary is for MQTT, but doesn't seem to work with AWS 
 #include <WiFiClientSecure.h>
+
 #include <ArduinoJson.h>
 #include <ArduinoOTA.h>
 //#include <MQTT.h>
@@ -20,11 +21,12 @@ public:
   bool publishMessage( const char *payload, const char *message );
   void subscribeTopic( const char *topic );
   void setOnMessageCallback(std::function<void (char *, uint8_t *, unsigned int)> callback);
-
+  bool reconnect_to_wifi(); 
+  bool reconnect_to_mqtt(); 
 private:
   char* AWS_IOT_PUBLISH_TOPIC;
   char* AWS_IOT_SUB_TOPIC;
-  WiFiClientSecure net;
+  WiFiClient net;
 
 
   static void messageHandler(char* topic, byte* payload, unsigned int length); 
